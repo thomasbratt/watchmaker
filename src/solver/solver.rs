@@ -1,16 +1,17 @@
-use crate::{Crossover, Evaluate, Initialize, Mutate};
+use std::time::Duration;
+// use crate::{Crossover, Evaluate, Initialize, Mutate};
 
 pub struct Solver<G> {
-    initialize: Initialize<G>,
-    evaluate: Evaluate<G>,
-    crossover: Crossover<G>,
-    mutate: Mutate<G>,
-    mutationRate: f64,
-    populationCount: usize,
-    timeLimit: TimeSpan,
+    initialize: fn() -> G,
+    evaluate: fn(G) -> f64,
+    crossover: fn(G,G) -> G,
+    mutate: fn(G) -> G,
+    mutation_rate: f64,
+    population_count: usize,
+    time_limit: Duration,
 }
 
-impl Solver<G> {
+impl <G> Solver<G> {
     pub fn solve(){
 
     }

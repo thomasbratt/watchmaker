@@ -8,8 +8,6 @@ A genetic algorithm implementation in Rust.
 
 * Developed as an investigation into capabilities and implementation characteristics
 * Written in the Rust programming language
-* Supports sparse data that do not fit well into a vector (ie words in a document)
-* Has mitigation for very small probabilities (floating point values)
 
 ## Usage
 
@@ -33,3 +31,4 @@ MIT permissive license. See LICENSE.txt for full license details.
 # Source Code Repository
 
 <https://github.com/thomasbratt/watchmaker>
+
