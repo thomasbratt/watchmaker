@@ -1,7 +1,7 @@
 use crate::common::make_random;
 use crate::solver::wsgenome::WSGenome;
 use std::time::Duration;
-use watchmaker::{Genetic, Solver, StoppingCriterion};
+use watchmaker::Solver;
 
 // Test
 #[test]

@@ -1,7 +1,5 @@
 use crate::common::make_random_string;
-use rand::distributions::Alphanumeric;
-use rand::{Rng, RngCore};
-use watchmaker::Genetic;
+use watchmaker::{Genetic, Random};
 
 #[derive(Debug)]
 pub(crate) struct WSGenome(String);
@@ -10,14 +8,7 @@ static TARGET: &str = "weasel";
 static LENGTH: usize = TARGET.len();
 
 impl Genetic<WSGenome> for WSGenome {
-    fn initialize(random: &mut Box<dyn RngCore>) -> WSGenome {
-        // make_random_string(random, LENGTH)
-        // let s: String = random
-        //     .sample_iter(&Alphanumeric)
-        //     .take(LENGTH)
-        //     .map(char::from)
-        //     .collect::<String>()
-        //     .to_string();
+    fn initialize(random: &mut Random) -> WSGenome {
         WSGenome(make_random_string(random, LENGTH))
     }
 
@@ -25,11 +16,11 @@ impl Genetic<WSGenome> for WSGenome {
         todo!()
     }
 
-    fn crossover(random: &mut Box<dyn RngCore>, lhs: WSGenome, rhs: WSGenome) -> WSGenome {
+    fn crossover(random: &mut Random, lhs: WSGenome, rhs: WSGenome) -> WSGenome {
         todo!()
     }
 
-    fn mutate(random: &mut Box<dyn RngCore>, original: WSGenome) -> WSGenome {
+    fn mutate(random: &mut Random, original: WSGenome) -> WSGenome {
         todo!()
     }
 }

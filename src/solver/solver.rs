@@ -1,7 +1,8 @@
+use crate::common::Random;
 use crate::solver::results::Results;
 use crate::solver::stopping_criterion::StoppingCriterion;
 use crate::Genetic;
-use rand::{Rng, RngCore};
+use rand::Rng;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 use std::time::Duration;
@@ -11,7 +12,7 @@ where
     G: Genetic<G>,
 {
     phantom_data: PhantomData<G>,
-    random: Box<dyn RngCore>,
+    random: Random,
     mutation_rate: f64,
     population_size: usize,
     epoch_count: usize,
@@ -24,7 +25,7 @@ where
     G: Debug + Genetic<G>,
 {
     pub fn new(
-        random: Box<dyn RngCore>,
+        random: Random,
         mutation_rate: f64,
         population_size: usize,
         epoch_count: usize,
