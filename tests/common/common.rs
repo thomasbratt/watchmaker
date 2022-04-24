@@ -1,7 +1,17 @@
-pub fn check_equal_instruction(actual: Instruction, expected: Instruction) {
-    if IS_LOGGING_ENABLED {
-        println!("actual   : {:?}", actual);
-        println!("expected : {:?}", expected);
-    }
-    assert_eq!(actual, expected);
+use rand::distributions::Alphanumeric;
+use rand::{Rng, RngCore};
+
+pub fn make_random() -> Box<dyn RngCore> {
+    use rand_xoshiro::rand_core::SeedableRng;
+    use rand_xoshiro::Xoshiro256PlusPlus;
+    Box::new(Xoshiro256PlusPlus::seed_from_u64(82938))
+}
+
+pub fn make_random_string(random: &mut Box<dyn RngCore>, length: usize) -> String {
+    random
+        .sample_iter(&Alphanumeric)
+        .take(length)
+        .map(char::from)
+        .collect::<String>()
+        .to_string()
 }

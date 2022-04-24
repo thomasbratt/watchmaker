@@ -1,8 +1,8 @@
 #![doc = include_str!("../README.md")]
 
-mod operations;
 mod solver;
+mod genetic;
 
-pub use operations::*;
 pub use solver::*;
+pub use genetic::*;
 

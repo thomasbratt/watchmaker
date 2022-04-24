@@ -1,2 +1,2 @@
-
-mod operations;
+mod common;
+mod solver;
