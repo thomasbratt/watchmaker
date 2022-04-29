@@ -19,16 +19,16 @@ A genetic algorithm implementation in Rust.
 ## Example
 
 
-# Alternatives
+## Alternatives
 
 Genetic Algorithm is a very well known technique.
 There are many alternatives for Rust available through cargo: <https://crates.io/search?q=genetic%20algorithm>
 
-# License
+## License
 
-MIT permissive license. See LICENSE.txt for full license details.
+MIT permissive license. See LICENSE for full license details.
 
-# Source Code Repository
+## Source Code Repository
 
 <https://github.com/thomasbratt/watchmaker>
 
