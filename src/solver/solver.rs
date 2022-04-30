@@ -1,12 +1,11 @@
-use crate::solver::results::Results;
-use crate::solver::stopping_criterion::StoppingCriterion;
-use crate::Genetic;
+use crate::solver::reason::Reason;
+use crate::solver::success::Success;
+use crate::{Failure, Genetic, Progress};
 use rand::Rng;
 use std::fmt::Debug;
 use std::time::{Duration, Instant};
 
-pub type Progress<G> = Box<dyn FnMut(usize, Duration, f64, &G) -> bool>;
-
+// Run a genetic algorithm search.
 pub fn solve<G>(
     mut genetic: Box<dyn Genetic<G>>,
     mut progress: Option<Progress<G>>,
@@ -15,15 +14,31 @@ pub fn solve<G>(
     mutation_rate: f64,
     population_size: usize,
     time_limit: Duration,
-) -> Results<G>
+) -> Result<Success<G>, Failure>
 where
     G: Clone + Debug + Eq + PartialEq,
 {
+    if epoch_limit < 1 {
+        return Err(Failure::epoch_limit());
+    }
+
+    if mutation_rate < 0.0 {
+        return Err(Failure::mutation_rate());
+    }
+
+    if population_size < 1 {
+        return Err(Failure::population_size());
+    }
+
+    if time_limit.is_zero() {
+        return Err(Failure::time_limit());
+    }
+
     let start_time = Instant::now();
 
     let mut population = Vec::with_capacity(population_size);
-    let mut replacement_population = Vec::with_capacity(population_size);
-    let mut population_costs = Vec::with_capacity(population_size);
+    let mut replacement = Vec::with_capacity(population_size);
+    let mut costs = Vec::with_capacity(population_size);
 
     for _ in 0..population_size {
         population.push(genetic.initialize());
@@ -38,7 +53,7 @@ where
 
         for genome in &population {
             let cost = genetic.evaluate(genome);
-            population_costs.push(cost);
+            costs.push(cost);
             if cost < best_cost {
                 best_cost = cost;
                 best_genome = genome.clone();
@@ -50,51 +65,51 @@ where
         if progress.is_some()
             && !progress.as_mut().unwrap()(epoch, elapsed, best_cost, &best_genome)
         {
-            return Results {
-                reason: StoppingCriterion::StopRequested,
+            return Result::Ok(Success {
+                reason: Reason::StopRequested,
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&population_costs),
-                worst_cost: worst_cost(&population_costs),
+                mean_cost: mean_cost(&costs),
+                worst_cost: worst_cost(&costs),
                 best_genome,
-            };
+            });
         }
 
         if epoch == epoch_limit {
-            return Results {
-                reason: StoppingCriterion::Epoch(epoch),
+            return Result::Ok(Success {
+                reason: Reason::Epoch(epoch),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&population_costs),
-                worst_cost: worst_cost(&population_costs),
+                mean_cost: mean_cost(&costs),
+                worst_cost: worst_cost(&costs),
                 best_genome,
-            };
+            });
         }
 
         if best_cost <= cost_target {
-            return Results {
-                reason: StoppingCriterion::CostTargetReached(best_cost),
+            return Result::Ok(Success {
+                reason: Reason::CostTargetReached(best_cost),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&population_costs),
-                worst_cost: worst_cost(&population_costs),
+                mean_cost: mean_cost(&costs),
+                worst_cost: worst_cost(&costs),
                 best_genome,
-            };
+            });
         }
 
         if elapsed >= time_limit {
-            return Results {
-                reason: StoppingCriterion::TimeOut(elapsed),
+            return Result::Ok(Success {
+                reason: Reason::TimeOut(elapsed),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&population_costs),
-                worst_cost: worst_cost(&population_costs),
+                mean_cost: mean_cost(&costs),
+                worst_cost: worst_cost(&costs),
                 best_genome,
-            };
+            });
         }
 
         let candidate_count = 3;
@@ -103,8 +118,8 @@ where
             let mut rhs_index = 0;
             let mut rhs_cost = f64::MAX;
             for _ in 0..candidate_count {
-                let j = genetic.random().gen_range(0..population_costs.len());
-                let rhs_cost_candidate = *population_costs.get(j).unwrap();
+                let j = genetic.random().gen_range(0..costs.len());
+                let rhs_cost_candidate = *costs.get(j).unwrap();
                 if rhs_cost_candidate < rhs_cost {
                     rhs_cost = rhs_cost_candidate;
                     rhs_index = j;
@@ -123,12 +138,12 @@ where
             // }
             // eprintln!("lhs:{:?}, rhs:{:?}, c:{:?}, rhs_index:{}, rhs_cost:{}", lhs, rhs, c, rhs_index, rhs_cost);
 
-            replacement_population.push(m);
+            replacement.push(m);
         }
 
-        std::mem::swap(&mut population, &mut replacement_population);
-        replacement_population.clear();
-        population_costs.clear();
+        std::mem::swap(&mut population, &mut replacement);
+        replacement.clear();
+        costs.clear();
     }
 }
 

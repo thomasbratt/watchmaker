@@ -1,7 +1,11 @@
-mod results;
+mod failure;
+mod progress;
+mod reason;
 mod solver;
-mod stopping_criterion;
+mod success;
 
-pub use results::Results;
+pub use failure::Failure;
+pub use progress::Progress;
+pub use reason::Reason;
 pub use solver::solve;
-pub use stopping_criterion::StoppingCriterion;
+pub use success::Success;

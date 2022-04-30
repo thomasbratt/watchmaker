@@ -1,8 +1,8 @@
 use std::time::Duration;
 
-// Defines when to stop the search.
+// Define the reasons the search terminated.
 #[derive(Debug)]
-pub enum StoppingCriterion {
+pub enum Reason {
     Epoch(usize),
     TimeOut(Duration),
     CostTargetReached(f64),

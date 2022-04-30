@@ -1,10 +1,10 @@
-use crate::solver::stopping_criterion::StoppingCriterion;
+use crate::solver::reason::Reason;
 use std::time::Duration;
 
-// The results of the genetic algorithm search.
+// Define the successful outcome of a genetic algorithm search.
 #[derive(Debug)]
-pub struct Results<G> {
-    pub reason: StoppingCriterion,
+pub struct Success<G> {
+    pub reason: Reason,
     pub epoch: usize,
     pub elapsed: Duration,
     pub best_cost: f64,

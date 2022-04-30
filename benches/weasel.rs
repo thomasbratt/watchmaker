@@ -4,7 +4,7 @@ use watchmaker::{make_random, solve, WSGenetic};
 
 #[inline]
 fn weasel(n: usize) {
-    let _results = solve(
+    let _result = solve(
         Box::new(WSGenetic::new(make_random())),
         None,
         0.01,
@@ -13,7 +13,7 @@ fn weasel(n: usize) {
         1_000,
         Duration::from_secs(5),
     );
-    // eprintln!("{:?}", results)
+    // eprintln!("{:?}", _results)
 }
 
 fn weasel_1_000(c: &mut Criterion) {
