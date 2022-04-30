@@ -1,19 +1,26 @@
-use crate::common::make_random;
-use crate::solver::wsgenome::WSGenome;
 use std::time::Duration;
-use watchmaker::Solver;
 
-// Test
+use watchmaker::{make_random, Solver, WSGenetic, WSGenome};
+
 #[test]
 fn adhoc() {
-    let solver: Solver<WSGenome> = Solver::new(
-        make_random(),
-        0.01,
+    let mut solver: Solver<WSGenome> = Solver::new(
+        Box::new(WSGenetic::new(make_random())),
+        0.00,
         1_000,
-        100_000,
-        Duration::from_secs(10),
+        100,
+        Duration::from_secs(5),
         0.0,
+        // Some(Box::new(|epoch, elapsed, best_cost, best_genome| {
+        //     eprintln!(
+        //         "progress - epoch:{}, elapsed:{:?} best_cost:{} best_genome:{:?}",
+        //         epoch, elapsed, best_cost, best_genome
+        //     );
+        //     true
+        // })),
+        None,
     );
 
-    solver.solve();
+    let results = solver.solve();
+    eprintln!("{:?}", results)
 }
