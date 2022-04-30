@@ -1,20 +1,18 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use std::time::Duration;
-use watchmaker::{make_random, Solver, WSGenetic, WSGenome};
+use watchmaker::{make_random, solve, WSGenetic};
 
 #[inline]
 fn weasel(n: usize) {
-    let mut solver: Solver<WSGenome> = Solver::new(
+    let _results = solve(
         Box::new(WSGenetic::new(make_random())),
+        None,
         0.01,
         n,
+        0.0,
         1_000,
         Duration::from_secs(5),
-        0.0,
-        None,
     );
-
-    let _results = solver.solve();
     // eprintln!("{:?}", results)
 }
 

@@ -1,16 +1,11 @@
 use std::time::Duration;
 
-use watchmaker::{make_random, Solver, WSGenetic, WSGenome};
+use watchmaker::{make_random, solve, WSGenetic};
 
 #[test]
 fn adhoc() {
-    let mut solver: Solver<WSGenome> = Solver::new(
+    let results = solve(
         Box::new(WSGenetic::new(make_random())),
-        0.00,
-        1_000,
-        100,
-        Duration::from_secs(5),
-        0.0,
         // Some(Box::new(|epoch, elapsed, best_cost, best_genome| {
         //     eprintln!(
         //         "progress - epoch:{}, elapsed:{:?} best_cost:{} best_genome:{:?}",
@@ -19,8 +14,12 @@ fn adhoc() {
         //     true
         // })),
         None,
+        0.00,
+        1_000,
+        0.0,
+        100,
+        Duration::from_secs(5),
     );
 
-    let results = solver.solve();
     eprintln!("{:?}", results)
 }
