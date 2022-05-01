@@ -10,6 +10,7 @@ pub fn solve<G>(
     mut genetic: Box<dyn Genetic<G>>,
     mut progress: Option<Progress<G>>,
     cost_target: f64,
+    cross_over_candidates: usize,
     epoch_limit: usize,
     mutation_rate: f64,
     population_size: usize,
@@ -18,6 +19,10 @@ pub fn solve<G>(
 where
     G: Clone + Debug + Eq + PartialEq,
 {
+    if cross_over_candidates < 1 {
+        return Err(Failure::cross_over_candidates());
+    }
+
     if epoch_limit < 1 {
         return Err(Failure::epoch_limit());
     }
@@ -65,7 +70,7 @@ where
         if progress.is_some()
             && !progress.as_mut().unwrap()(epoch, elapsed, best_cost, &best_genome)
         {
-            return Result::Ok(Success {
+            return Ok(Success {
                 reason: Reason::StopRequested,
                 epoch,
                 elapsed,
@@ -77,7 +82,7 @@ where
         }
 
         if epoch == epoch_limit {
-            return Result::Ok(Success {
+            return Ok(Success {
                 reason: Reason::Epoch(epoch),
                 epoch,
                 elapsed,
@@ -89,7 +94,7 @@ where
         }
 
         if best_cost <= cost_target {
-            return Result::Ok(Success {
+            return Ok(Success {
                 reason: Reason::CostTargetReached(best_cost),
                 epoch,
                 elapsed,
@@ -101,7 +106,7 @@ where
         }
 
         if elapsed >= time_limit {
-            return Result::Ok(Success {
+            return Ok(Success {
                 reason: Reason::TimeOut(elapsed),
                 epoch,
                 elapsed,
@@ -112,12 +117,10 @@ where
             });
         }
 
-        let candidate_count = 3;
-
         for lhs in population.iter() {
             let mut rhs_index = 0;
             let mut rhs_cost = f64::MAX;
-            for _ in 0..candidate_count {
+            for _ in 0..cross_over_candidates {
                 let j = genetic.random().gen_range(0..costs.len());
                 let rhs_cost_candidate = *costs.get(j).unwrap();
                 if rhs_cost_candidate < rhs_cost {
