@@ -1,4 +1,5 @@
-#![doc = include_str!("../README.md")]
+// Does not work with backticks.
+// #![doc = include_str!("../README.md")]
 
 mod common;
 mod genetic;

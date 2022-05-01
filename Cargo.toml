@@ -1,13 +1,14 @@
 [package]
 authors = ["Thomas Bratt <thomas.bratt@gmail.com>"]
 description = "A genetic algorithm implementation in Rust."
+documentation = "https://github.com/thomasbratt/watchmaker"
 edition = "2021"
 homepage = "https://github.com/thomasbratt/watchmaker"
-keywords = ["genetic algorithm", "optimization"]
+keywords = ["algorithm", "evolution", "genetic", "optimization"]
 license-file = "LICENSE"
 name = "watchmaker"
 readme = "README.md"
-repository = "git@github.com:thomasbratt/watchmaker.git"
+repository = "https://github.com/thomasbratt/watchmaker"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
