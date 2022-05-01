@@ -1,7 +1,7 @@
 [package]
 authors = ["Thomas Bratt <thomas.bratt@gmail.com>"]
 description = "A genetic algorithm implementation in Rust."
-documentation = "https://github.com/thomasbratt/watchmaker"
+documentation = "https://docs.rs/watchmaker/0.1.0/watchmaker/fn.solve.html"
 edition = "2021"
 homepage = "https://github.com/thomasbratt/watchmaker"
 keywords = ["algorithm", "evolution", "genetic", "optimization"]

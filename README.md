@@ -8,6 +8,8 @@ A genetic algorithm implementation in Rust.
 
 * Developed as an investigation into capabilities and implementation characteristics
 * Written in the Rust programming language
+* The API aims to be minimal and complete.
+* Some features are missing (see Roadmap section).
 
 ## Usage
 
@@ -23,17 +25,68 @@ A genetic algorithm implementation in Rust.
         fn random(&mut self) -> &mut Random;
     }
 ```
+Example:
+```rust
+
+type MyGenome = String;
+
+pub struct MySearchProblem {
+    random: Random,
+}
+
+impl MySearchProblem {
+    pub fn new(random: Random) -> Self {
+        Self { random }
+    }
+}
+
+impl Genetic<MyGenome> for MySearchProblem {
+    fn initialize(&mut self) -> MyGenome {
+        unimplemented!();
+    }
+
+    fn evaluate(&mut self, genome: &MyGenome) -> f64 {
+        unimplemented!();
+    }
+
+    fn crossover(&mut self, lhs: &MyGenome, rhs: &MyGenome) -> MyGenome {
+        unimplemented!();
+    }
+
+    fn mutate(&mut self, original: &MyGenome) -> MyGenome {
+        unimplemented!();
+    }
+
+    fn random(&mut self) -> &mut Random {
+        &mut self.random
+    }
+}
+```
+See `WSGenome` and `WSGenetic` for a fully implemented, working example that finds a target string.
 * Call the solver method:
 ```rust
+pub fn solve<G>(
+    mut genetic: Box<dyn Genetic<G>>,
+    mut progress: Option<Progress<G>>,
+    cost_target: f64,
+    cross_over_candidates: usize,
+    epoch_limit: usize,
+    mutation_rate: f64,
+    population_size: usize,
+    time_limit: Duration,
+) -> Result<Success<G>, Failure>
+```
+Example:
+```rust
     let result = solve(
-        Box::new(MySearchProblem::new(make_random())),
-        None,
-        0.00,
-        32,
-        100,
-        0.0,
-        1_000,
-        Duration::from_secs(5),
+        mut genetic: Box::new(MySearchProblem::new(make_random())),
+        mut progress: None,
+        cost_target: 0.00,
+        cross_over_candidates: 32,
+        epoch_limit: 100,
+        mutation_rate: 0.0,
+        population_size: 1_000,
+        time_limit: Duration::from_secs(5),
     );
     println!("{:?}", result);
 ```
@@ -49,14 +102,46 @@ See the examples folder.
 
 ## Roadmap
 
-* Rustdoc
+Note major version increment with each release.
+API changes will not be backwards compatible between releases.
+
+- [ ] v3.x.x
+
+* Fourth published version
+* Long Term Support
+* Will take contributions, bug fixes from this point on.
+
+- [ ] v2.x.x
+
+* Third published version (beta quality)
 * Multithreading
+* Unsupported
+
+- [ ] v1.x.x
+
+* Second published version (beta quality)
+* Builder pattern for search settings
+* Rustdoc
+* Link to examples, with description and sample output
+* Update features section
+* Unsupported
+
+- [x] v0.1.0
+
+* First published version (beta quality)
+* Unsupported
 
 ## Alternatives
 
-Genetic Algorithm is a very well known technique:
+* The Genetic Algorithm is a very well known technique:
 <https://en.wikipedia.org/wiki/Genetic_algorithm>
-There are many alternatives for Rust available through cargo: <https://crates.io/search?q=genetic%20algorithm>
+* Rust Awesome has a list: <https://github.com/awesome-rust-com/awesome-rust#genetic-algorithms>
+* Cargo: <https://crates.io/search?q=genetic%20algorithm>
+
+## Contributing
+
+Not accepting pull requests yet :)
+See roadmap.
 
 ## License
 
