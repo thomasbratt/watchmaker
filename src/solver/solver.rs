@@ -6,6 +6,7 @@ use std::fmt::Debug;
 use std::time::{Duration, Instant};
 
 // Run a genetic algorithm search.
+#[allow(clippy::too_many_arguments)]
 pub fn solve<G>(
     mut genetic: Box<dyn Genetic<G>>,
     mut progress: Option<Progress<G>>,
