@@ -1,3 +1,5 @@
-mod solver;
+mod search;
+mod settings;
 
-pub use solver::*;
+pub use search::*;
+pub use settings::*;

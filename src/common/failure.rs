@@ -1,5 +1,5 @@
-// Defines reasons for the search failing.
-#[derive(Debug, PartialEq)]
+// Define failure conditions for crate.
+#[derive(Clone, Debug, PartialEq)]
 pub struct Failure {
     error: i32,
     message: Box<str>,

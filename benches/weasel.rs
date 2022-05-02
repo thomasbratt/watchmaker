@@ -1,20 +1,18 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use std::time::Duration;
-use watchmaker::{make_random, solve, WSGenetic};
+use watchmaker::{make_random, search, SettingsBuilder, WSGenetic};
 
 #[inline]
 fn weasel(population_size: usize, cross_over_candidates: usize) {
-    let _result = solve(
+    let _result = search(
         Box::new(WSGenetic::new(make_random())),
         None,
-        0.0,
-        cross_over_candidates,
-        1_000,
-        0.01,
-        population_size,
-        Duration::from_secs(15),
+        make_random(),
+        &SettingsBuilder::default()
+            .cross_over_candidates(cross_over_candidates)
+            .population_size(population_size)
+            .build()
+            .unwrap(),
     );
-    // eprintln!("{:?}", _result)
 }
 
 fn weasel_population_size_1_000(c: &mut Criterion) {

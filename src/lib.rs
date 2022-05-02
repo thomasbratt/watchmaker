@@ -3,8 +3,10 @@
 
 mod common;
 mod genetic;
-mod solver;
+mod search;
+mod settings;
 
 pub use common::*;
 pub use genetic::*;
-pub use solver::*;
+pub use search::*;
+pub use settings::*;

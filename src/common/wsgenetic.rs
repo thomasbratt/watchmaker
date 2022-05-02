@@ -50,8 +50,4 @@ impl Genetic<WSGenome> for WSGenetic {
         });
         WSGenome(String::from_iter(chars_result))
     }
-
-    fn random(&mut self) -> &mut Random {
-        &mut self.random
-    }
 }

@@ -1,52 +1,25 @@
-use crate::solver::reason::Reason;
-use crate::solver::success::Success;
-use crate::{Failure, Genetic, Progress};
+use crate::{largest, mean, Failure, Genetic, Progress, Random, Reason, Settings, Success};
 use rand::Rng;
 use std::fmt::Debug;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
-// Run a genetic algorithm search.
-#[allow(clippy::too_many_arguments)]
-pub fn solve<G>(
+// Search for a solution using a genetic algorithm.
+pub fn search<G>(
     mut genetic: Box<dyn Genetic<G>>,
     mut progress: Option<Progress<G>>,
-    cost_target: f64,
-    cross_over_candidates: usize,
-    epoch_limit: usize,
-    mutation_rate: f64,
-    population_size: usize,
-    time_limit: Duration,
+    mut random: Random,
+    settings: &Settings,
 ) -> Result<Success<G>, Failure>
 where
     G: Clone + Debug + Eq + PartialEq,
 {
-    if cross_over_candidates < 1 {
-        return Err(Failure::cross_over_candidates());
-    }
-
-    if epoch_limit < 1 {
-        return Err(Failure::epoch_limit());
-    }
-
-    if mutation_rate < 0.0 {
-        return Err(Failure::mutation_rate());
-    }
-
-    if population_size < 1 {
-        return Err(Failure::population_size());
-    }
-
-    if time_limit.is_zero() {
-        return Err(Failure::time_limit());
-    }
-
     let start_time = Instant::now();
 
-    let mut population = Vec::with_capacity(population_size);
-    let mut replacement = Vec::with_capacity(population_size);
-    let mut costs = Vec::with_capacity(population_size);
+    let mut population = Vec::with_capacity(settings.population_size());
+    let mut replacement = population.clone();
+    let mut costs = Vec::with_capacity(settings.population_size());
 
-    for _ in 0..population_size {
+    for _ in 0..settings.population_size() {
         population.push(genetic.initialize());
     }
 
@@ -76,44 +49,44 @@ where
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&costs),
-                worst_cost: worst_cost(&costs),
+                mean_cost: mean(&costs),
+                worst_cost: largest(&costs),
                 best_genome,
             });
         }
 
-        if epoch == epoch_limit {
+        if epoch == settings.epoch_limit() {
             return Ok(Success {
                 reason: Reason::Epoch(epoch),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&costs),
-                worst_cost: worst_cost(&costs),
+                mean_cost: mean(&costs),
+                worst_cost: largest(&costs),
                 best_genome,
             });
         }
 
-        if best_cost <= cost_target {
+        if best_cost <= settings.cost_target() {
             return Ok(Success {
                 reason: Reason::CostTargetReached(best_cost),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&costs),
-                worst_cost: worst_cost(&costs),
+                mean_cost: mean(&costs),
+                worst_cost: largest(&costs),
                 best_genome,
             });
         }
 
-        if elapsed >= time_limit {
+        if elapsed >= settings.time_limit() {
             return Ok(Success {
                 reason: Reason::TimeOut(elapsed),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean_cost(&costs),
-                worst_cost: worst_cost(&costs),
+                mean_cost: mean(&costs),
+                worst_cost: largest(&costs),
                 best_genome,
             });
         }
@@ -121,8 +94,8 @@ where
         for lhs in population.iter() {
             let mut rhs_index = 0;
             let mut rhs_cost = f64::MAX;
-            for _ in 0..cross_over_candidates {
-                let j = genetic.random().gen_range(0..costs.len());
+            for _ in 0..settings.cross_over_candidates() {
+                let j = random.gen_range(0..costs.len());
                 let rhs_cost_candidate = *costs.get(j).unwrap();
                 if rhs_cost_candidate < rhs_cost {
                     rhs_cost = rhs_cost_candidate;
@@ -131,13 +104,13 @@ where
             }
             let rhs = population.get(rhs_index).unwrap();
 
-            let cross = if genetic.random().gen_bool(0.5) {
+            let cross = if random.gen_bool(0.5) {
                 genetic.crossover(lhs, rhs)
             } else {
                 genetic.crossover(rhs, lhs)
             };
 
-            let mutant = if genetic.random().gen_bool(mutation_rate) {
+            let mutant = if random.gen_bool(settings.mutation_rate()) {
                 genetic.mutate(&cross)
             } else {
                 cross
@@ -155,14 +128,4 @@ where
         replacement.clear();
         costs.clear();
     }
-}
-
-fn mean_cost(costs: &[f64]) -> f64 {
-    costs.iter().fold(0.0, |acc, x| acc + x) / costs.len() as f64
-}
-
-fn worst_cost(costs: &[f64]) -> f64 {
-    costs
-        .iter()
-        .fold(0.0, |acc, x| if *x > acc { *x } else { acc })
 }

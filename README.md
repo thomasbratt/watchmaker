@@ -8,14 +8,15 @@ A genetic algorithm implementation in Rust.
 
 * Developed as an investigation into capabilities and implementation characteristics
 * Written in the Rust programming language
-* The API aims to be minimal and complete.
-* Some features are missing (see Roadmap section).
+* The API aims to be minimal and complete
+* Built-in crossover protection, to avoid the common bug where the first genome in a crossover operation is always used for the start of the resulting genome
+* Some features are missing (see Roadmap section)
 
 ## Usage
 
-* Install Rust using rustup <https://rustup.rs/>
-* Add a reference to your Cargo.toml file from: <https://crates.io/crates/watchmaker>
-* Implement the `Genetic` interface for your search problem:
+* Install Rust using `rustup` <https://rustup.rs/>
+* Add a reference to your `Cargo.toml` file from: <https://crates.io/crates/watchmaker>
+* Implement the `Genetic` trait for your search problem:
 ```rust
     pub trait Genetic<G> {
         fn initialize(&mut self) -> G;
@@ -56,37 +57,25 @@ impl Genetic<MyGenome> for MySearchProblem {
     fn mutate(&mut self, original: &MyGenome) -> MyGenome {
         unimplemented!();
     }
-
-    fn random(&mut self) -> &mut Random {
-        &mut self.random
-    }
 }
 ```
 See `WSGenome` and `WSGenetic` for a fully implemented, working example that finds a target string.
-* Call the solver method:
+* Call the `solver` method:
 ```rust
-pub fn solve<G>(
-    mut genetic: Box<dyn Genetic<G>>,
-    mut progress: Option<Progress<G>>,
-    cost_target: f64,
-    cross_over_candidates: usize,
-    epoch_limit: usize,
-    mutation_rate: f64,
-    population_size: usize,
-    time_limit: Duration,
-) -> Result<Success<G>, Failure>
+    pub fn search<G>(
+        mut genetic: Box<dyn Genetic<G>>,
+        mut progress: Option<Progress<G>>,
+        mut random: Random,
+        settings: &Settings,
+    ) -> Result<Success<G>, Failure>
 ```
 Example:
 ```rust
     let result = solve(
         mut genetic: Box::new(MySearchProblem::new(make_random())),
         mut progress: None,
-        cost_target: 0.00,
-        cross_over_candidates: 32,
-        epoch_limit: 100,
-        mutation_rate: 0.0,
-        population_size: 1_000,
-        time_limit: Duration::from_secs(5),
+        make_random(),
+        &Settings::default(),
     );
     println!("{:?}", result);
 ```
@@ -98,12 +87,12 @@ Example:
 
 ## Examples
 
-See the examples folder.
+See the `examples` folder.
 
 ## Roadmap
 
-Note major version increment with each release.
-API changes will not be backwards compatible between releases.
+Note major version increment with each major release.
+API changes will not be backwards compatible between major releases.
 
 - [ ] v3.x.x
 
@@ -120,9 +109,10 @@ API changes will not be backwards compatible between releases.
 - [ ] v1.x.x
 
 * Second published version (beta quality)
+* Randomly swap genome to crossover, to prevent bias towards individual genome
 * Builder pattern for search settings
-* Rustdoc
 * Link to examples, with description and sample output
+* Rustdoc
 * Update features section
 * Unsupported
 
