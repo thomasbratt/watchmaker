@@ -130,11 +130,17 @@ where
                 }
             }
             let rhs = population.get(rhs_index).unwrap();
-            let c = genetic.crossover(lhs, rhs);
-            let m = if genetic.random().gen_bool(mutation_rate) {
-                genetic.mutate(&c)
+
+            let cross = if genetic.random().gen_bool(0.5) {
+                genetic.crossover(lhs, rhs)
             } else {
-                c.clone()
+                genetic.crossover(rhs, lhs)
+            };
+
+            let mutant = if genetic.random().gen_bool(mutation_rate) {
+                genetic.mutate(&cross)
+            } else {
+                cross
             };
 
             // if c != m {
@@ -142,7 +148,7 @@ where
             // }
             // eprintln!("lhs:{:?}, rhs:{:?}, c:{:?}, rhs_index:{}, rhs_cost:{}", lhs, rhs, c, rhs_index, rhs_cost);
 
-            replacement.push(m);
+            replacement.push(mutant);
         }
 
         std::mem::swap(&mut population, &mut replacement);

@@ -30,18 +30,11 @@ impl Genetic<WSGenome> for WSGenetic {
         let lhs_str = lhs.0.as_str();
         let rhs_str = rhs.0.as_str();
         let crossover_index = self.random.gen_range(0..lhs_str.len() - 1);
-        let is_swap = self.random.gen_bool(0.5);
         let result = lhs_str
             .chars()
             .zip(rhs_str.chars())
             .enumerate()
-            .map(|(i, (a, b))| {
-                if (i > crossover_index) ^ is_swap {
-                    a
-                } else {
-                    b
-                }
-            });
+            .map(|(i, (a, b))| if i > crossover_index { a } else { b });
         WSGenome(String::from_iter(result))
     }
 
