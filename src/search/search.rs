@@ -110,7 +110,7 @@ where
                 genetic.crossover(rhs, lhs)
             };
 
-            let mutant = if random.gen_bool(settings.mutation_rate()) {
+            let mutant = if random.gen_bool(settings.mutation_probability()) {
                 genetic.mutate(&cross)
             } else {
                 cross

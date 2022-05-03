@@ -19,10 +19,12 @@ fn fails_when_epoch_limit_too_low() {
 
 #[test]
 fn fails_when_mutation_rate_is_negative() {
-    let result = SettingsBuilder::default().mutation_rate(-1.0).build();
+    let result = SettingsBuilder::default()
+        .mutation_probability(-1.0)
+        .build();
 
     assert_eq!(result.is_err(), true);
-    assert_eq!(result.err().unwrap(), Failure::mutation_rate());
+    assert_eq!(result.err().unwrap(), Failure::mutation_probability());
 }
 
 #[test]

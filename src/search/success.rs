@@ -1,9 +1,10 @@
 use crate::Reason;
 use std::time::Duration;
 
-// Define the successful outcome of a genetic algorithm search.
+/// Define the successful outcome of a genetic algorithm search.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Success<G> {
+    // TODO: these need to be accessors
     pub reason: Reason,
     pub epoch: usize,
     pub elapsed: Duration,

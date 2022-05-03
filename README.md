@@ -1,6 +1,6 @@
 # watchmaker
 
-A genetic algorithm implementation in Rust.
+A [genetic algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm) implementation in Rust.
 
 [![CircleCI](https://circleci.com/gh/thomasbratt/watchmaker/tree/main.svg?style=svg)](https://circleci.com/gh/thomasbratt/watchmaker/tree/main)
 
@@ -23,7 +23,6 @@ A genetic algorithm implementation in Rust.
         fn evaluate(&mut self, genome: &G) -> f64;
         fn crossover(&mut self, lhs: &G, rhs: &G) -> G;
         fn mutate(&mut self, original: &G) -> G;
-        fn random(&mut self) -> &mut Random;
     }
 ```
 Example:
@@ -111,9 +110,10 @@ API changes will not be backwards compatible between major releases.
 * Second published version (beta quality)
 * Randomly swap genome to crossover, to prevent bias towards individual genome
 * Builder pattern for search settings
-* Link to examples, with description and sample output
 * Rustdoc
+* Link to examples, with description and sample output
 * Update features section
+* Fix license - does not appear as 'standard' on crates.io
 * Unsupported
 
 - [x] v0.1.0
