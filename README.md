@@ -16,50 +16,8 @@ A [genetic algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm) implement
 
 * Install Rust using `rustup` <https://rustup.rs/>
 * Add a reference to your `Cargo.toml` file from: <https://crates.io/crates/watchmaker>
-* Implement the `Genetic` trait for your search problem:
-```rust
-    pub trait Genetic<G> {
-        fn initialize(&mut self) -> G;
-        fn evaluate(&mut self, genome: &G) -> f64;
-        fn crossover(&mut self, lhs: &G, rhs: &G) -> G;
-        fn mutate(&mut self, original: &G) -> G;
-    }
-```
-Example:
-```rust
+* Implement the `Genetic` trait for your search problem and call `watchmaker::search`.
 
-type MyGenome = String;
-
-pub struct MySearchProblem {
-    random: Random,
-}
-
-impl MySearchProblem {
-    pub fn new(random: Random) -> Self {
-        Self { random }
-    }
-}
-
-impl Genetic<MyGenome> for MySearchProblem {
-    fn initialize(&mut self) -> MyGenome {
-        unimplemented!();
-    }
-
-    fn evaluate(&mut self, genome: &MyGenome) -> f64 {
-        unimplemented!();
-    }
-
-    fn crossover(&mut self, lhs: &MyGenome, rhs: &MyGenome) -> MyGenome {
-        unimplemented!();
-    }
-
-    fn mutate(&mut self, original: &MyGenome) -> MyGenome {
-        unimplemented!();
-    }
-}
-```
-See `WSGenome` and `WSGenetic` for a fully implemented, working example that finds a target string.
-* Call the `solver` method:
 ```rust
     pub fn search<G>(
         mut genetic: Box<dyn Genetic<G>>,
@@ -68,15 +26,56 @@ See `WSGenome` and `WSGenetic` for a fully implemented, working example that fin
         settings: &Settings,
     ) -> Result<Success<G>, Failure>
 ```
-Example:
+
+Example that searches for an optimal floating point value:
+
 ```rust
-    let result = solve(
-        mut genetic: Box::new(MySearchProblem::new(make_random())),
-        mut progress: None,
+use watchmaker::*;
+
+fn main() {
+    let result = search(
+        Box::new(ExampleGenetic::new(make_random())),
+        Some(Box::new(|x| {
+            println!("progress:{:?}", x);
+        })),
         make_random(),
         &Settings::default(),
     );
     println!("{:?}", result);
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct ExampleGenome(pub f64);
+
+pub static TARGET: f64 = 100.0;
+
+pub struct ExampleGenetic {
+    random: Random,
+}
+
+impl ExampleGenetic {
+    pub fn new(random: Random) -> Self {
+        Self { random }
+    }
+}
+
+impl Genetic<ExampleGenome> for ExampleGenetic {
+    fn initialize(&mut self) -> ExampleGenome {
+        ExampleGenome(self.random.gen_range(0.0..1_000.0))
+    }
+
+    fn evaluate(&mut self, genome: &ExampleGenome) -> f64 {
+        (TARGET - genome.0).abs()
+    }
+
+    fn crossover(&mut self, lhs: &ExampleGenome, rhs: &ExampleGenome) -> ExampleGenome {
+        ExampleGenome((lhs.0 + rhs.0) / 2.0)
+    }
+
+    fn mutate(&mut self, original: &ExampleGenome) -> ExampleGenome {
+        ExampleGenome(original.0 + self.random.gen_range(-10.0..10.0))
+    }
+}
 ```
 
 ## Development
@@ -86,29 +85,35 @@ Example:
 
 ## Examples
 
-See the `examples` folder.
+* Run `cargo run --example peak`
+* Run `cargo run --example weasel`
+* Run `cargo run --example hyperparameter_grid_search`
 
 ## Roadmap
 
 Note major version increment with each major release.
 API changes will not be backwards compatible between major releases.
 
+- [ ] v4.x.x
+
+* Fifth published version
+* Long Term Support
+* Update features section
+* Will take contributions, bug fixes from this point on.
+* 
 - [ ] v3.x.x
 
 * Fourth published version
-* Long Term Support
-* Will take contributions, bug fixes from this point on.
-
-- [ ] v2.x.x
-
-* Third published version (beta quality)
-* Better typing around Progress
-* Simpler code example in README.md and crate documentation
-* Link to examples, with description and sample output
 * Split out algorithm that produces new generations
 * Multithreading
-* Update features section
-* Unsupported
+* Will take contributions, bug fixes from this point on.
+
+- [x] v2.x.x
+
+* Better typing around Progress
+* Simpler and more complete code example in README.md and crate documentation
+* Link to examples, with description and sample output
+* Unpublished, unsupported
 
 - [x] v1.x.x
 
