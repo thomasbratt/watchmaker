@@ -102,9 +102,9 @@ API changes will not be backwards compatible between major releases.
 - [ ] v2.x.x
 
 * Third published version (beta quality)
-* Link to examples, with description and sample output
 * Better typing around Progress
 * Simpler code example in README.md and crate documentation
+* Link to examples, with description and sample output
 * Split out algorithm that produces new generations
 * Multithreading
 * Update features section

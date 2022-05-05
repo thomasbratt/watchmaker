@@ -1,3 +1,4 @@
+use crate::search::progress::ProgressSnapshot;
 use crate::{largest, mean, Failure, Genetic, Progress, Random, Reason, Settings, Success};
 use rand::Rng;
 use std::fmt::Debug;
@@ -50,17 +51,12 @@ where
 
         let elapsed = Instant::now() - start_time;
 
-        if progress.is_some()
-            && !progress.as_mut().unwrap()(epoch, elapsed, best_cost, &best_genome)
-        {
-            return Ok(Success::new(
-                Reason::StopRequested,
+        if progress.is_some() {
+            progress.as_mut().unwrap()(ProgressSnapshot::new(
                 epoch,
                 elapsed,
                 best_cost,
-                mean(&costs),
-                largest(&costs),
-                best_genome,
+                &best_genome,
             ));
         }
 
