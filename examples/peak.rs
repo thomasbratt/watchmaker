@@ -1,29 +1,32 @@
 use rand::Rng;
-use watchmaker::*;
+use watchmaker::{make_random, search, Genetic, Random, SettingsBuilder};
 
-#[test]
-fn search_finds_result_for_simple_test_case() {
+// Show how the results and progress reporting work.
+// The genetic algorithm will search for the number 100.
+/// The name comes from the fact that the cost function has its 'peak' (actually its lowest value)
+/// at 100.
+fn main() {
     let result = search(
         Box::new(PeakGenetic::new(make_random())),
-        None,
+        Some(Box::new(|snapshot| {
+            println!("progress snapshot:{:?}", snapshot);
+        })),
         make_random(),
-        &Settings::default(),
+        &SettingsBuilder::default()
+            .cross_over_candidates(2)
+            .mutation_probability(0.1)
+            .population_size(30)
+            .build()
+            .unwrap(),
     );
-
-    eprintln!("{:?}", result);
-    assert_eq!(result.is_ok(), true);
-    assert_eq!(result.as_ref().ok().unwrap().best_cost(), 0.0);
-    assert_eq!(result.as_ref().ok().unwrap().best_genome().0, TARGET);
+    println!("{:?}", result);
 }
 
 #[derive(Clone, Debug, PartialEq)]
-#[doc(hidden)]
 pub struct PeakGenome(pub f64);
 
-#[doc(hidden)]
 pub static TARGET: f64 = 100.0;
 
-#[doc(hidden)]
 pub struct PeakGenetic {
     random: Random,
 }
@@ -36,7 +39,7 @@ impl PeakGenetic {
 
 impl Genetic<PeakGenome> for PeakGenetic {
     fn initialize(&mut self) -> PeakGenome {
-        PeakGenome(self.random.gen_range(0.0..200.0))
+        PeakGenome(self.random.gen_range(0.0..1_000.0))
     }
 
     fn evaluate(&mut self, genome: &PeakGenome) -> f64 {

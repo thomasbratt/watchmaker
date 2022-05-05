@@ -21,7 +21,7 @@ pub fn search<G>(
     settings: &Settings,
 ) -> Result<Success<G>, Failure>
 where
-    G: Clone + Debug + Eq + PartialEq,
+    G: Clone + Debug + PartialEq,
 {
     let start_time = Instant::now();
 
