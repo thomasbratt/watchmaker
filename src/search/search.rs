@@ -3,7 +3,16 @@ use rand::Rng;
 use std::fmt::Debug;
 use std::time::Instant;
 
-// Search for a solution using a genetic algorithm.
+/// Search for a solution using a genetic algorithm.
+/// This is the main entry point for the crate.
+///
+/// # Arguments
+///
+/// * `genetic` - Define the genetic operations on a chromosome `G`.
+/// * `progress` - Define the progress reporting callback.
+/// * `random` - Syntax sugar for a source of randomness chosen at runtime.
+/// * `settings` - Configuration of genetic algorithm search.
+///
 pub fn search<G>(
     mut genetic: Box<dyn Genetic<G>>,
     mut progress: Option<Progress<G>>,
@@ -44,51 +53,51 @@ where
         if progress.is_some()
             && !progress.as_mut().unwrap()(epoch, elapsed, best_cost, &best_genome)
         {
-            return Ok(Success {
-                reason: Reason::StopRequested,
+            return Ok(Success::new(
+                Reason::StopRequested,
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean(&costs),
-                worst_cost: largest(&costs),
+                mean(&costs),
+                largest(&costs),
                 best_genome,
-            });
+            ));
         }
 
         if epoch == settings.epoch_limit() {
-            return Ok(Success {
-                reason: Reason::Epoch(epoch),
+            return Ok(Success::new(
+                Reason::Epoch(epoch),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean(&costs),
-                worst_cost: largest(&costs),
+                mean(&costs),
+                largest(&costs),
                 best_genome,
-            });
+            ));
         }
 
         if best_cost <= settings.cost_target() {
-            return Ok(Success {
-                reason: Reason::CostTargetReached(best_cost),
+            return Ok(Success::new(
+                Reason::CostTargetReached(best_cost),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean(&costs),
-                worst_cost: largest(&costs),
+                mean(&costs),
+                largest(&costs),
                 best_genome,
-            });
+            ));
         }
 
         if elapsed >= settings.time_limit() {
-            return Ok(Success {
-                reason: Reason::TimeOut(elapsed),
+            return Ok(Success::new(
+                Reason::TimeOut(elapsed),
                 epoch,
                 elapsed,
                 best_cost,
-                mean_cost: mean(&costs),
-                worst_cost: largest(&costs),
+                mean(&costs),
+                largest(&costs),
                 best_genome,
-            });
+            ));
         }
 
         for lhs in population.iter() {

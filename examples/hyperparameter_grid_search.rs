@@ -22,11 +22,14 @@ fn main() {
 
             println!(
                 "(population:{:5}, candidates:{:3}) -> (cost:{:5},elapsed:{:?}) ",
-                population_size, cross_over_candidates, result.best_cost, result.elapsed
+                population_size,
+                cross_over_candidates,
+                result.best_cost(),
+                result.elapsed()
             );
 
-            if result.best_cost == 0.0 {
-                let metric = result.epoch as u128 * result.elapsed.as_millis();
+            if result.best_cost() == 0.0 {
+                let metric = result.epoch() as u128 * result.elapsed().as_millis();
                 top.push((metric, population_size, cross_over_candidates, Some(result)));
                 top.sort_by(|a, b| (a.0).partial_cmp(&b.0).unwrap());
                 top.remove(top.len() - 1);

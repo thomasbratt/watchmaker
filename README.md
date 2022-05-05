@@ -103,6 +103,11 @@ API changes will not be backwards compatible between major releases.
 
 * Third published version (beta quality)
 * Multithreading
+* Split out algorithm that produces new generations
+* Better typing around Progress
+* Simpler code example in README.md and crate documentation
+* Link to examples, with description and sample output
+* Update features section
 * Unsupported
 
 - [ ] v1.x.x
@@ -111,8 +116,6 @@ API changes will not be backwards compatible between major releases.
 * Randomly swap genome to crossover, to prevent bias towards individual genome
 * Builder pattern for search settings
 * Rustdoc
-* Link to examples, with description and sample output
-* Update features section
 * Fix license - does not appear as 'standard' on crates.io
 * Unsupported
 

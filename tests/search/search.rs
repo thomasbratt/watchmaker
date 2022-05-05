@@ -11,6 +11,6 @@ fn search_finds_result_for_simple_test_case() {
 
     eprintln!("{:?}", result);
     assert_eq!(result.is_ok(), true);
-    assert_eq!(result.as_ref().ok().unwrap().best_cost, 0.0);
-    assert_eq!(result.as_ref().ok().unwrap().best_genome.0, TARGET);
+    assert_eq!(result.as_ref().ok().unwrap().best_cost(), 0.0);
+    assert_eq!(result.as_ref().ok().unwrap().best_genome().0, TARGET);
 }

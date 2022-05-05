@@ -12,7 +12,7 @@ impl Failure {
     }
 
     /// Return a human readable error message as a dynamically allocated immutable str.
-    pub fn message(&self) -> &Box<str> {
+    pub fn message(&self) -> &str {
         &self.message
     }
 
