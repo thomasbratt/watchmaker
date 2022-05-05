@@ -102,15 +102,15 @@ API changes will not be backwards compatible between major releases.
 - [ ] v2.x.x
 
 * Third published version (beta quality)
-* Multithreading
-* Split out algorithm that produces new generations
+* Link to examples, with description and sample output
 * Better typing around Progress
 * Simpler code example in README.md and crate documentation
-* Link to examples, with description and sample output
+* Split out algorithm that produces new generations
+* Multithreading
 * Update features section
 * Unsupported
 
-- [ ] v1.x.x
+- [x] v1.x.x
 
 * Second published version (beta quality)
 * Randomly swap genome to crossover, to prevent bias towards individual genome
