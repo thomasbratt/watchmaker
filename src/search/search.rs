@@ -96,6 +96,18 @@ where
             ));
         }
 
+        // TODO: Settings -> SearchSettings
+        // TODO: SettingsBuilder -> SearchSettingsBuilder
+        // TODO: add PopulationSelectorSettings field
+
+        // TODO: marker trait PopulationSelectorSettings
+        // TODO: trait PopulationSelector<S> where S: PopulationSelectorSettings
+
+        // TODO: call PopulationSelector<S>.select(&population, &costs, &settings.selector, &mut random, &mut partner_indices)
+
+        // TODO: TournamentPopulationSelectorSettings.cross_over_candidates
+        // TODO: struct TournamentPopulationSelector impl PopulationSelector<TournamentPopulationSelectorSettings>
+
         for lhs in population.iter() {
             let mut rhs_index = 0;
             let mut rhs_cost = f64::MAX;
