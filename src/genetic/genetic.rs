@@ -10,5 +10,5 @@ pub trait Genetic<G> {
     fn crossover(&mut self, lhs: &G, rhs: &G) -> G;
 
     /// Return a randomly mutated copy of a genome.
-    fn mutate(&mut self, original: &G) -> G;
+    fn mutate(&mut self, genome: &G) -> G;
 }

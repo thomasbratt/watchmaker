@@ -4,9 +4,9 @@
 mod common;
 mod genetic;
 mod search;
-mod settings;
+mod selector;
 
 pub use common::*;
 pub use genetic::*;
 pub use search::*;
-pub use settings::*;
+pub use selector::*;

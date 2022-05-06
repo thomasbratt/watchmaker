@@ -4,10 +4,11 @@ use watchmaker::*;
 #[test]
 fn search_finds_result_for_simple_test_case() {
     let result = search(
-        Box::new(PeakGenetic::new(make_random())),
+        Box::new(PeakGenetic::new(make_random_from_seed(123))),
+        Box::new(TournamentSelector::default()),
         None,
-        make_random(),
-        &Settings::default(),
+        make_random_from_seed(456),
+        &SearchSettings::default(),
     );
 
     eprintln!("{:?}", result);
@@ -40,11 +41,11 @@ impl Genetic<PeakGenome> for PeakGenetic {
     }
 
     fn evaluate(&mut self, genome: &PeakGenome) -> f64 {
-        (TARGET - genome.0).abs()
+        round((TARGET - genome.0).abs(), 10, 2)
     }
 
     fn crossover(&mut self, lhs: &PeakGenome, rhs: &PeakGenome) -> PeakGenome {
-        PeakGenome((lhs.0 + rhs.0) / 2.0)
+        PeakGenome(round((lhs.0 + rhs.0) / 2.0, 10, 2))
     }
 
     fn mutate(&mut self, original: &PeakGenome) -> PeakGenome {

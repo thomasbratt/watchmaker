@@ -1,7 +1,9 @@
 use crate::search::progress::ProgressSnapshot;
-use crate::{largest, mean, Failure, Genetic, Progress, Random, Reason, Settings, Success};
+use crate::selector::Selector;
+use crate::{largest, mean, Failure, Genetic, Progress, Random, Reason, SearchSettings, Success};
 use rand::Rng;
 use std::fmt::Debug;
+use std::iter::zip;
 use std::time::Instant;
 
 /// Search for a solution using a genetic algorithm.
@@ -10,15 +12,17 @@ use std::time::Instant;
 /// # Arguments
 ///
 /// * `genetic` - Define the genetic operations on a chromosome `G`.
+/// * `selector` - Define the algorithm used to select genome partners for cross over.
 /// * `progress` - Define the progress reporting callback.
 /// * `random` - Syntax sugar for a source of randomness chosen at runtime.
 /// * `settings` - Configuration of genetic algorithm search.
 ///
 pub fn search<G>(
     mut genetic: Box<dyn Genetic<G>>,
+    mut selector: Box<dyn Selector<G>>,
     mut progress: Option<Progress<G>>,
     mut random: Random,
-    settings: &Settings,
+    settings: &SearchSettings,
 ) -> Result<Success<G>, Failure>
 where
     G: Clone + Debug + PartialEq,
@@ -27,6 +31,7 @@ where
 
     let mut population = Vec::with_capacity(settings.population_size());
     let mut replacement = population.clone();
+    let mut partner_indices: Vec<usize> = (0..settings.population_size()).map(|_| 0).collect();
     let mut costs = Vec::with_capacity(settings.population_size());
 
     for _ in 0..settings.population_size() {
@@ -96,30 +101,10 @@ where
             ));
         }
 
-        // TODO: Settings -> SearchSettings
-        // TODO: SettingsBuilder -> SearchSettingsBuilder
-        // TODO: add PopulationSelectorSettings field
+        selector.select(&population, &costs, &mut random, &mut partner_indices);
 
-        // TODO: marker trait PopulationSelectorSettings
-        // TODO: trait PopulationSelector<S> where S: PopulationSelectorSettings
-
-        // TODO: call PopulationSelector<S>.select(&population, &costs, &settings.selector, &mut random, &mut partner_indices)
-
-        // TODO: TournamentPopulationSelectorSettings.cross_over_candidates
-        // TODO: struct TournamentPopulationSelector impl PopulationSelector<TournamentPopulationSelectorSettings>
-
-        for lhs in population.iter() {
-            let mut rhs_index = 0;
-            let mut rhs_cost = f64::MAX;
-            for _ in 0..settings.cross_over_candidates() {
-                let j = random.gen_range(0..costs.len());
-                let rhs_cost_candidate = *costs.get(j).unwrap();
-                if rhs_cost_candidate < rhs_cost {
-                    rhs_cost = rhs_cost_candidate;
-                    rhs_index = j;
-                }
-            }
-            let rhs = population.get(rhs_index).unwrap();
+        for (lhs, rhs_index) in zip(population.iter(), partner_indices.iter()) {
+            let rhs = population.get(*rhs_index).unwrap();
 
             let cross = if random.gen_bool(0.5) {
                 genetic.crossover(lhs, rhs)
@@ -132,11 +117,6 @@ where
             } else {
                 cross
             };
-
-            // if c != m {
-            //     eprintln!("c:{:?}, m:{:?}", &c, &m);
-            // }
-            // eprintln!("lhs:{:?}, rhs:{:?}, c:{:?}, rhs_index:{}, rhs_cost:{}", lhs, rhs, c, rhs_index, rhs_cost);
 
             replacement.push(mutant);
         }

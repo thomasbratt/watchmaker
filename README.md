@@ -47,7 +47,7 @@ fn main() {
 #[derive(Clone, Debug, PartialEq)]
 pub struct ExampleGenome(pub f64);
 
-pub static TARGET: f64 = 100.0;
+pub const TARGET: f64 = 100.0;
 
 pub struct ExampleGenetic {
     random: Random,

@@ -1,25 +1,22 @@
-use crate::settings::settings::Settings;
-use crate::Failure;
+use crate::{Failure, SearchSettings};
 
 use std::time::Duration;
 
 /// Use to construct the settings required to execute a genetic algorithm search.
 #[derive(Clone, Debug, PartialEq)]
-pub struct SettingsBuilder {
+pub struct SearchSettingsBuilder {
     cost_target: f64,
-    cross_over_candidates: usize,
     epoch_limit: usize,
     mutation_probability: f64,
     population_size: usize,
     time_limit: Duration,
 }
 
-impl SettingsBuilder {
+impl SearchSettingsBuilder {
     /// The settings used to initialize the builder.
-    pub fn from(settings: &Settings) -> Self {
+    pub fn from(settings: &SearchSettings) -> Self {
         Self {
             cost_target: settings.cost_target(),
-            cross_over_candidates: settings.cross_over_candidates(),
             epoch_limit: settings.epoch_limit(),
             mutation_probability: settings.mutation_probability(),
             population_size: settings.population_size(),
@@ -34,13 +31,6 @@ impl SettingsBuilder {
     /// equal to this value.   
     pub fn cost_target(mut self, value: f64) -> Self {
         self.cost_target = value;
-        self
-    }
-
-    /// The number of candidate genomes that will be compared when deciding which genome to
-    /// use when new genomes are generated during cross over.  
-    pub fn cross_over_candidates(mut self, value: usize) -> Self {
-        self.cross_over_candidates = value;
         self
     }
 
@@ -71,10 +61,9 @@ impl SettingsBuilder {
     }
 
     /// Construct the settings required to execute a genetic algorithm search.
-    pub fn build(&self) -> Result<Settings, Failure> {
-        Settings::new(
+    pub fn build(&self) -> Result<SearchSettings, Failure> {
+        SearchSettings::new(
             self.cost_target,
-            self.cross_over_candidates,
             self.epoch_limit,
             self.mutation_probability,
             self.population_size,
@@ -83,8 +72,8 @@ impl SettingsBuilder {
     }
 }
 
-impl Default for SettingsBuilder {
+impl Default for SearchSettingsBuilder {
     fn default() -> Self {
-        SettingsBuilder::from(&Settings::default())
+        SearchSettingsBuilder::from(&SearchSettings::default())
     }
 }

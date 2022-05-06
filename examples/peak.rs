@@ -1,5 +1,5 @@
 use rand::Rng;
-use watchmaker::{make_random, search, Genetic, Random, SettingsBuilder};
+use watchmaker::*;
 
 // Show how the results and progress reporting work.
 // The genetic algorithm will search for the number 100.
@@ -8,16 +8,12 @@ use watchmaker::{make_random, search, Genetic, Random, SettingsBuilder};
 fn main() {
     let result = search(
         Box::new(PeakGenetic::new(make_random())),
+        Box::new(TournamentSelector::default()),
         Some(Box::new(|snapshot| {
             println!("progress snapshot:{:?}", snapshot);
         })),
         make_random(),
-        &SettingsBuilder::default()
-            .cross_over_candidates(2)
-            .mutation_probability(0.1)
-            .population_size(30)
-            .build()
-            .unwrap(),
+        &SearchSettings::default(),
     );
     println!("{:?}", result);
 }
@@ -25,7 +21,7 @@ fn main() {
 #[derive(Clone, Debug, PartialEq)]
 pub struct PeakGenome(pub f64);
 
-pub static TARGET: f64 = 100.0;
+pub const TARGET: f64 = 100.0;
 
 pub struct PeakGenetic {
     random: Random,

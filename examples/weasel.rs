@@ -8,12 +8,10 @@ fn main() {
     for x in (1..=8).map(|exponent| 2_usize.pow(exponent)) {
         let result = search(
             Box::new(WSGenetic::new(make_random())),
+            Box::new(TournamentSelector::new(x).unwrap()),
             None,
             make_random(),
-            &SettingsBuilder::default()
-                .cross_over_candidates(x)
-                .build()
-                .unwrap(),
+            &SearchSettings::default(),
         );
         println!("cross_over_candidates:{:3}, {:?}", x, result);
     }

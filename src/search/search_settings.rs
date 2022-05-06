@@ -3,16 +3,15 @@ use std::time::Duration;
 
 /// The settings for a genetic algorithm search.
 #[derive(Clone, Debug, PartialEq)]
-pub struct Settings {
+pub struct SearchSettings {
     cost_target: f64,
-    cross_over_candidates: usize,
     epoch_limit: usize,
     mutation_probability: f64,
     population_size: usize,
     time_limit: Duration,
 }
 
-impl Settings {
+impl SearchSettings {
     /// The genome cost that will terminate the search.
     /// Genome costs are expected to be higher at the start of the search process and become
     /// smaller as the search progresses.
@@ -20,12 +19,6 @@ impl Settings {
     /// equal to this value.   
     pub fn cost_target(&self) -> f64 {
         self.cost_target
-    }
-
-    /// The number of candidate genomes that will be compared when deciding which genome to
-    /// use when new genomes are generated during cross over.  
-    pub fn cross_over_candidates(&self) -> usize {
-        self.cross_over_candidates
     }
 
     /// The number of maximum number of epochs (iterations) that the search should execute
@@ -52,16 +45,11 @@ impl Settings {
 
     pub(super) fn new(
         cost_target: f64,
-        cross_over_candidates: usize,
         epoch_limit: usize,
         mutation_rate: f64,
         population_size: usize,
         time_limit: Duration,
-    ) -> Result<Settings, Failure> {
-        if cross_over_candidates < 1 {
-            return Err(Failure::cross_over_candidates());
-        }
-
+    ) -> Result<SearchSettings, Failure> {
         if epoch_limit < 1 {
             return Err(Failure::epoch_limit());
         }
@@ -80,7 +68,6 @@ impl Settings {
 
         Ok(Self {
             cost_target,
-            cross_over_candidates,
             epoch_limit,
             mutation_probability: mutation_rate,
             population_size,
@@ -89,16 +76,15 @@ impl Settings {
     }
 }
 
-impl Default for Settings {
+impl Default for SearchSettings {
     /// The default search settings.
     /// These will only be suitable for very small search problems.
     fn default() -> Self {
-        Settings {
+        SearchSettings {
             cost_target: 0.0,
-            cross_over_candidates: 16,
             epoch_limit: 1_024,
             mutation_probability: 0.01,
-            population_size: 512,
+            population_size: 1_024,
             time_limit: Duration::from_secs(5),
         }
     }
