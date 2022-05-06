@@ -100,11 +100,13 @@ API changes will not be backwards compatible between major releases.
 * Long Term Support
 * Update features section
 * Will take contributions, bug fixes from this point on.
-* 
-- [x] v3.x.x
+
+- [ ] v3.x.x
 
 * Fourth published version
 * Split out algorithm that produces new generations
+* Add Travelling Salesperson Problem
+* Split tests, benches, examples into separate crate + workspace
 * Multithreading
 * Unsupported
 
