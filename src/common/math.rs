@@ -1,6 +1,10 @@
 pub fn round(value: f64, base: usize, places: usize) -> f64 {
-    let scale = (base * places) as f64;
-    (value * scale).round() / scale as f64
+    if places == 0 {
+        value.trunc()
+    } else {
+        let scale = (base * places) as f64;
+        (value * scale).floor() / scale as f64
+    }
 }
 
 pub(crate) fn mean(values: &[f64]) -> f64 {

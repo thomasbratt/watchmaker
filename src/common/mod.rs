@@ -1,3 +1,4 @@
+mod assertions;
 mod failure;
 mod math;
 mod random;

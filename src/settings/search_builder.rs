@@ -1,10 +1,13 @@
-use crate::{Failure, SearchSettings};
-
+use crate::settings::concurrency::ConcurrencySettings;
+use crate::settings::search::SearchSettings;
+use crate::Failure;
 use std::time::Duration;
 
 /// Use to construct the settings required to execute a genetic algorithm search.
-#[derive(Clone, Debug, PartialEq)]
+// #[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
 pub struct SearchSettingsBuilder {
+    concurrency: ConcurrencySettings,
     cost_target: f64,
     epoch_limit: usize,
     mutation_probability: f64,
@@ -16,12 +19,19 @@ impl SearchSettingsBuilder {
     /// The settings used to initialize the builder.
     pub fn from(settings: &SearchSettings) -> Self {
         Self {
+            concurrency: settings.concurrency(),
             cost_target: settings.cost_target(),
             epoch_limit: settings.epoch_limit(),
             mutation_probability: settings.mutation_probability(),
             population_size: settings.population_size(),
             time_limit: settings.time_limit(),
         }
+    }
+
+    //// Define the degree of parallelism to use when searching.
+    pub fn concurrency(mut self, value: ConcurrencySettings) -> Self {
+        self.concurrency = value;
+        self
     }
 
     /// The genome cost that will terminate the search.
@@ -63,6 +73,7 @@ impl SearchSettingsBuilder {
     /// Construct the settings required to execute a genetic algorithm search.
     pub fn build(&self) -> Result<SearchSettings, Failure> {
         SearchSettings::new(
+            self.concurrency,
             self.cost_target,
             self.epoch_limit,
             self.mutation_probability,

@@ -1,5 +1,5 @@
 use crate::selector::Selector;
-use crate::{Failure, Random};
+use crate::Failure;
 use rand::Rng;
 use std::marker::PhantomData;
 
@@ -45,18 +45,12 @@ impl<G> Default for TournamentSelector<G> {
 
 impl<G> Selector<G> for TournamentSelector<G> {
     #[allow(clippy::needless_range_loop)]
-    fn select(
-        &mut self,
-        _population: &[G],
-        costs: &[f64],
-        random: &mut Random,
-        partner_indices: &mut [usize],
-    ) {
+    fn select(&mut self, _population: &[G], costs: &[f64], partner_indices: &mut [usize]) {
         for lhs_index in 0..costs.len() {
             let mut rhs_index = 0;
             let mut rhs_cost = f64::MAX;
             for _ in 0..self.cross_over_candidates {
-                let j = random.gen_range(0..costs.len());
+                let j = rand::thread_rng().gen_range(0..costs.len());
                 let rhs_cost_candidate = *costs.get(j).unwrap();
                 if rhs_cost_candidate < rhs_cost {
                     rhs_cost = rhs_cost_candidate;

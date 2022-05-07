@@ -48,10 +48,18 @@ impl Failure {
         }
     }
 
+    /// Return a failure for an invalid multithreading setting `min_chunk_size`.
+    pub fn min_chunk_size() -> Self {
+        Failure {
+            error: 5,
+            message: Box::from("min_chunk_size size must be at least 1"),
+        }
+    }
+
     /// Return a failure for the case when the time limit is invalid.
     pub fn time_limit() -> Self {
         Failure {
-            error: 5,
+            error: 6,
             message: Box::from("time limit must be non-zero"),
         }
     }

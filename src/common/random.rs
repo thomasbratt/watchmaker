@@ -1,33 +1,34 @@
-use rand::distributions::Alphanumeric;
+use rand::distributions::Distribution;
 use rand::Rng;
-use rand::RngCore;
 
-/// Syntax sugar for a source of randomness chosen at runtime.
-pub type Random = Box<dyn RngCore>;
-
-/// Create a source of randomness for use in the genetic algorithm.
-/// This is provided as a convenience and different sources of randomness can be used, as long as they conform to [`Random`].
-pub fn make_random() -> Random {
-    use rand_xoshiro::rand_core::SeedableRng;
-    use rand_xoshiro::Xoshiro256PlusPlus;
-    Box::new(Xoshiro256PlusPlus::from_entropy())
-}
-
-/// Create a source of randomness with a seed for use in the genetic algorithm.
-/// This is provided as a convenience and different sources of randomness can be used, as long as
-/// they conform to [`Random`].
-pub fn make_random_from_seed(seed: u64) -> Random {
-    use rand_xoshiro::rand_core::SeedableRng;
-    use rand_xoshiro::Xoshiro256PlusPlus;
-    Box::new(Xoshiro256PlusPlus::seed_from_u64(seed))
-}
+pub static CHARACTERS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
 
 /// Make a random string.
 /// This is a convenience function used by some examples.
-pub fn make_random_string(random: &mut Random, length: usize) -> String {
-    random
-        .sample_iter(&Alphanumeric)
+pub fn make_random_string(length: usize) -> String {
+    let distribution = RandomStringDistribution::new(CHARACTERS);
+    rand::thread_rng()
+        .sample_iter(&distribution)
         .take(length)
         .map(char::from)
         .collect::<String>()
+}
+
+pub struct RandomStringDistribution {
+    bytes: Vec<u8>,
+}
+
+impl RandomStringDistribution {
+    pub fn new(chars: &str) -> Self {
+        Self {
+            bytes: Vec::from(chars.as_bytes()),
+        }
+    }
+}
+
+impl Distribution<u8> for RandomStringDistribution {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> u8 {
+        let i = rng.gen_range(0..self.bytes.len());
+        self.bytes[i]
+    }
 }

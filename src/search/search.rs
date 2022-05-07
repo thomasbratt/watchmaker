@@ -1,9 +1,11 @@
 use crate::search::progress::ProgressSnapshot;
 use crate::selector::Selector;
-use crate::{largest, mean, Failure, Genetic, Progress, Random, Reason, SearchSettings, Success};
-use rand::Rng;
+use crate::{
+    largest, mean, ConcurrencySettings, Failure, Genetic, Progress, Reason, SearchSettings, Success,
+};
+use rand::{thread_rng, Rng};
+use rayon::prelude::*;
 use std::fmt::Debug;
-use std::iter::zip;
 use std::time::Instant;
 
 /// Search for a solution using a genetic algorithm.
@@ -14,45 +16,71 @@ use std::time::Instant;
 /// * `genetic` - Define the genetic operations on a chromosome `G`.
 /// * `selector` - Define the algorithm used to select genome partners for cross over.
 /// * `progress` - Define the progress reporting callback.
-/// * `random` - Syntax sugar for a source of randomness chosen at runtime.
 /// * `settings` - Configuration of genetic algorithm search.
 ///
 pub fn search<G>(
-    mut genetic: Box<dyn Genetic<G>>,
-    mut selector: Box<dyn Selector<G>>,
+    genetic: Box<dyn Genetic<G> + Send + Sync>,
+    mut selector: Box<dyn Selector<G> + Send + Sync>,
     mut progress: Option<Progress<G>>,
-    mut random: Random,
     settings: &SearchSettings,
 ) -> Result<Success<G>, Failure>
 where
-    G: Clone + Debug + PartialEq,
+    G: Clone + Debug + PartialEq + Send + Sync,
 {
     let start_time = Instant::now();
-
-    let mut population = Vec::with_capacity(settings.population_size());
+    let mut population: Vec<G> = make_vec(settings.population_size(), || genetic.initialize());
     let mut replacement = population.clone();
-    let mut partner_indices: Vec<usize> = (0..settings.population_size()).map(|_| 0).collect();
-    let mut costs = Vec::with_capacity(settings.population_size());
-
-    for _ in 0..settings.population_size() {
-        population.push(genetic.initialize());
-    }
-
+    let mut partner_indices = make_vec(settings.population_size(), || 0_usize);
+    let mut costs = make_vec(settings.population_size(), || 0.0);
     let mut epoch = 0;
     let mut best_cost = f64::MAX;
-    let mut best_genome = population.get(0).unwrap().clone();
+    let mut best_index = 0;
+    let mut best_genome;
 
     loop {
         epoch += 1;
 
-        for genome in &population {
-            let cost = genetic.evaluate(genome);
-            costs.push(cost);
-            if cost < best_cost {
-                best_cost = cost;
-                best_genome = genome.clone();
+        match settings.concurrency() {
+            ConcurrencySettings::MultiThreaded => {
+                costs.par_iter_mut().enumerate().for_each(|(i, c)| {
+                    *c = genetic.evaluate(population.get(i).unwrap());
+                });
+            }
+            ConcurrencySettings::SingleThreaded | ConcurrencySettings::Detect(_) => {
+                costs.iter_mut().enumerate().for_each(|(i, c)| {
+                    *c = genetic.evaluate(population.get(i).unwrap());
+                });
             }
         }
+
+        selector.select(&population, &costs, &mut partner_indices);
+
+        for ((i, lhs), rhs_index) in
+            std::iter::zip(population.iter().enumerate(), partner_indices.iter())
+        {
+            let c = costs.get(i).unwrap();
+            if *c < best_cost {
+                best_cost = *c;
+                best_index = i;
+            }
+
+            let rhs = population.get(*rhs_index).unwrap();
+
+            let cross = if thread_rng().gen_bool(0.5) {
+                genetic.crossover(lhs, rhs)
+            } else {
+                genetic.crossover(rhs, lhs)
+            };
+
+            let mutant = if thread_rng().gen_bool(settings.mutation_probability()) {
+                genetic.mutate(&cross)
+            } else {
+                cross
+            };
+
+            replacement.push(mutant);
+        }
+        best_genome = &population[best_index];
 
         let elapsed = Instant::now() - start_time;
 
@@ -61,7 +89,7 @@ where
                 epoch,
                 elapsed,
                 best_cost,
-                &best_genome,
+                best_genome,
             ));
         }
 
@@ -73,7 +101,7 @@ where
                 best_cost,
                 mean(&costs),
                 largest(&costs),
-                best_genome,
+                best_genome.clone(),
             ));
         }
 
@@ -85,7 +113,7 @@ where
                 best_cost,
                 mean(&costs),
                 largest(&costs),
-                best_genome,
+                best_genome.clone(),
             ));
         }
 
@@ -97,32 +125,15 @@ where
                 best_cost,
                 mean(&costs),
                 largest(&costs),
-                best_genome,
+                best_genome.clone(),
             ));
-        }
-
-        selector.select(&population, &costs, &mut random, &mut partner_indices);
-
-        for (lhs, rhs_index) in zip(population.iter(), partner_indices.iter()) {
-            let rhs = population.get(*rhs_index).unwrap();
-
-            let cross = if random.gen_bool(0.5) {
-                genetic.crossover(lhs, rhs)
-            } else {
-                genetic.crossover(rhs, lhs)
-            };
-
-            let mutant = if random.gen_bool(settings.mutation_probability()) {
-                genetic.mutate(&cross)
-            } else {
-                cross
-            };
-
-            replacement.push(mutant);
         }
 
         std::mem::swap(&mut population, &mut replacement);
         replacement.clear();
-        costs.clear();
     }
+}
+
+fn make_vec<T, F: FnMut() -> T>(n: usize, repeater: F) -> Vec<T> {
+    std::iter::repeat_with(repeater).take(n).collect()
 }

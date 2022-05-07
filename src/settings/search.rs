@@ -1,9 +1,11 @@
+use crate::settings::concurrency::ConcurrencySettings;
 use crate::Failure;
 use std::time::Duration;
 
 /// The settings for a genetic algorithm search.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
 pub struct SearchSettings {
+    concurrency: ConcurrencySettings,
     cost_target: f64,
     epoch_limit: usize,
     mutation_probability: f64,
@@ -12,6 +14,11 @@ pub struct SearchSettings {
 }
 
 impl SearchSettings {
+    //// Define the degree of parallelism to use when searching.
+    pub fn concurrency(&self) -> ConcurrencySettings {
+        self.concurrency
+    }
+
     /// The genome cost that will terminate the search.
     /// Genome costs are expected to be higher at the start of the search process and become
     /// smaller as the search progresses.
@@ -44,9 +51,10 @@ impl SearchSettings {
     }
 
     pub(super) fn new(
+        concurrency: ConcurrencySettings,
         cost_target: f64,
         epoch_limit: usize,
-        mutation_rate: f64,
+        mutation_probability: f64,
         population_size: usize,
         time_limit: Duration,
     ) -> Result<SearchSettings, Failure> {
@@ -54,7 +62,7 @@ impl SearchSettings {
             return Err(Failure::epoch_limit());
         }
 
-        if mutation_rate < 0.0 {
+        if mutation_probability < 0.0 {
             return Err(Failure::mutation_probability());
         }
 
@@ -67,9 +75,10 @@ impl SearchSettings {
         }
 
         Ok(Self {
+            concurrency,
             cost_target,
             epoch_limit,
-            mutation_probability: mutation_rate,
+            mutation_probability,
             population_size,
             time_limit,
         })
@@ -78,9 +87,10 @@ impl SearchSettings {
 
 impl Default for SearchSettings {
     /// The default search settings.
-    /// These will only be suitable for very small search problems.
+    /// These are suitable for small search problems.
     fn default() -> Self {
         SearchSettings {
+            concurrency: ConcurrencySettings::SingleThreaded,
             cost_target: 0.0,
             epoch_limit: 1_024,
             mutation_probability: 0.01,

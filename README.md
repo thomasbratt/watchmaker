@@ -94,42 +94,53 @@ impl Genetic<ExampleGenome> for ExampleGenetic {
 Note major version increment with each major release.
 API changes will not be backwards compatible between major releases.
 
-- [ ] v4.x.x
+- [ ] v2.x.x
 
-* Fifth published version
-* Long Term Support
-* Update features section
+* Third published version; Long Term Support
 * Will take contributions, bug fixes from this point on.
 
-- [ ] v3.x.x
+- [ ] Unpublished; unsupported; beta quality
 
-* Fourth published version
+* Add hyperparameter detection feature
+* Update benchmarks
+* Update examples
+* Update features section in README.md
+* Update examples in README.md
+
+- [ ] Unpublished; unsupported; beta quality
+
+* Unpublished; unsupported; beta quality
+* Split tests, benches, examples into separate crate + workspace
+* Tests for Genetic operator correctness
+* Update features section in README.md
+* Update examples in README.md
+* Add crate level docs
+
+- [x] Unpublished; unsupported; beta quality
+
 * Split out algorithm that produces new generations
 * Add Travelling Salesperson Problem
-* Split tests, benches, examples into separate crate + workspace
 * Multithreading
-* Unsupported
+* Improve benchmarking
+* Fix bug with non-monotonic best cost / genomes
 
-- [x] v2.x.x
+- [x] Unpublished; unsupported; beta quality
 
 * Better typing around Progress
 * Simpler and more complete code example in README.md and crate documentation
 * Link to examples, with description and sample output
-* Unpublished, unsupported
 
 - [x] v1.x.x
 
-* Second published version (beta quality)
+* Second published version; unsupported; beta quality
 * Randomly swap genome to crossover, to prevent bias towards individual genome
 * Builder pattern for search settings
 * Rustdoc
 * Fix license - does not appear as 'standard' on crates.io
-* Unsupported
 
 - [x] v0.1.0
 
-* First published version (beta quality)
-* Unsupported
+* First published version; unsupported; beta quality
 
 ## Alternatives
 
