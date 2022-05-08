@@ -1,6 +1,7 @@
 // Does not work with backticks.
 // #![doc = include_str!("../README.md")]
 
+//! See [README.md](https://github.com/thomasbratt/watchmaker/blob/main/core/README.md) for a description
 mod common;
 mod genetic;
 mod search;

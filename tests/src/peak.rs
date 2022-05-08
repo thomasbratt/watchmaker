@@ -1,10 +1,10 @@
 use rand::Rng;
 use watchmaker::*;
 
+pub const TARGET: f64 = 100.0;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct PeakGenome(pub f64);
-
-pub const TARGET: f64 = 100.0;
 
 #[derive(Default)]
 pub struct PeakGenetic {}

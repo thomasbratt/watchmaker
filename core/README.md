@@ -6,76 +6,62 @@ A [genetic algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm) library i
 
 ## Features
 
-* Developed as an investigation into capabilities and implementation characteristics
-* Written in the Rust programming language
-* The API aims to be minimal and complete
+* The API aims to be minimal and complete but allow extension with new genomes, selection operators and genetic operators
+* Results include the best genome found, reason for stopping the search and some basic statistics
+* Optional progress reporting
+* Optional multithreaded evaluation of genomes using [Rayon](https://github.com/rayon-rs/rayon)
 * Built-in crossover protection, to avoid the common bug where the first genome in a crossover operation is always used for the start of the resulting genome
-* Some features are missing (see Roadmap section)
 
 ## Usage
 
-* Install Rust using `rustup` <https://rustup.rs/>
-* Add a reference to your `Cargo.toml` file from: <https://crates.io/crates/watchmaker>
+* Install Rust using [rustup](https://rustup.rs)
+* Add an entry to the `[dependencies]` section of your `Cargo.toml` file from: <https://crates.io/crates/watchmaker>
 * Implement the `Genetic` trait for your search problem and call `watchmaker::search`.
 
-```rust
-    pub fn search<G>(
-        mut genetic: Box<dyn Genetic<G>>,
-        mut progress: Option<Progress<G>>,
-        mut random: Random,
-        settings: &Settings,
-    ) -> Result<Success<G>, Failure>
-```
-
-Example that searches for an optimal floating point value:
+A complete example that searches for a specific floating point value:
 
 ```rust
-use watchmaker::*;
+    use rand::Rng;
+    use watchmaker::*;
+    
+    pub const TARGET: f64 = 100.0;
 
-fn main() {
-    let result = search(
-        Box::new(ExampleGenetic::new(make_random())),
-        Some(Box::new(|x| {
-            println!("progress:{:?}", x);
-        })),
-        make_random(),
-        &Settings::default(),
-    );
-    println!("{:?}", result);
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct ExampleGenome(pub f64);
-
-pub const TARGET: f64 = 100.0;
-
-pub struct ExampleGenetic {
-    random: Random,
-}
-
-impl ExampleGenetic {
-    pub fn new(random: Random) -> Self {
-        Self { random }
+    fn main() {
+        println!("This is a very simple example that searches for the number 100.0.");
+        let result = search(
+            Box::new(PeakGenetic::default()),
+            Box::new(TournamentSelector::default()),
+            Some(Box::new(|progress| {
+                println!("{:?}", progress);
+            })),
+            &SearchSettings::default(),
+        );
+        println!("{:?}", result);
     }
-}
-
-impl Genetic<ExampleGenome> for ExampleGenetic {
-    fn initialize(&mut self) -> ExampleGenome {
-        ExampleGenome(self.random.gen_range(0.0..1_000.0))
+    
+    #[derive(Clone, Debug, PartialEq)]
+    pub struct PeakGenome(pub f64);
+    
+    #[derive(Default)]
+    pub struct PeakGenetic {}
+    
+    impl Genetic<PeakGenome> for PeakGenetic {
+        fn initialize(&self) -> PeakGenome {
+            PeakGenome(rand::thread_rng().gen_range(0.0..1_000.0))
+        }
+    
+        fn evaluate(&self, genome: &PeakGenome) -> f64 {
+            (TARGET - genome.0).abs()
+        }
+    
+        fn crossover(&self, lhs: &PeakGenome, rhs: &PeakGenome) -> PeakGenome {
+            PeakGenome((lhs.0 + rhs.0) / 2.0)
+        }
+    
+        fn mutate(&self, original: &PeakGenome) -> PeakGenome {
+            PeakGenome(original.0 + rand::thread_rng().gen_range(-10.0..10.0))
+        }
     }
-
-    fn evaluate(&mut self, genome: &ExampleGenome) -> f64 {
-        (TARGET - genome.0).abs()
-    }
-
-    fn crossover(&mut self, lhs: &ExampleGenome, rhs: &ExampleGenome) -> ExampleGenome {
-        ExampleGenome((lhs.0 + rhs.0) / 2.0)
-    }
-
-    fn mutate(&mut self, original: &ExampleGenome) -> ExampleGenome {
-        ExampleGenome(original.0 + self.random.gen_range(-10.0..10.0))
-    }
-}
 ```
 
 ## Development
@@ -83,15 +69,15 @@ impl Genetic<ExampleGenome> for ExampleGenetic {
 * Clone the repository (see below)
 * Run `cargo test` or `cargo build`
 
-## Examples
+## Tests and Examples
 
 * Run `cargo run --example peak`
 * Run `cargo run --example weasel`
-* Run `cargo run --example hyperparameter_grid_search`
+* Run `cargo run --example tsp`
+* Run `cargo run --example hyper_weasel`
+* Run `cargo run --example hyper_tsp`
 
-## Tests
-
-The tests are in a separate [tests](../tests) crate.
+Tests and examples are in a separate [tests](../tests) crate.
 This arrangement allows code reuse between tests, examples and benches without affecting the [core](core) crate.
 
 ## Roadmap
@@ -110,13 +96,14 @@ API changes will not be backwards compatible between major releases.
 * Update examples
 * Update benchmarks
 * Update API docs
+* Document `DetectConcurrencySettings`, `Selector` and `TournamentSelector` 
 * Update README.md features 
 * Update README.md examples
 * Add crate level docs
 
-- [x] v2.x.x
+- [x] v2.0.0
 
-* Fourth published version; unsupported; beta quality
+* Third published version; unsupported; beta quality
 * Split tests, benches, examples into separate crate + workspace
 * Add tests for `TournamentSelector`
 
