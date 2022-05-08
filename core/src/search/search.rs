@@ -1,3 +1,4 @@
+use crate::common::make_vec;
 use crate::search::progress::ProgressSnapshot;
 use crate::selector::Selector;
 use crate::{
@@ -132,8 +133,4 @@ where
         std::mem::swap(&mut population, &mut replacement);
         replacement.clear();
     }
-}
-
-fn make_vec<T, F: FnMut() -> T>(n: usize, repeater: F) -> Vec<T> {
-    std::iter::repeat_with(repeater).take(n).collect()
 }

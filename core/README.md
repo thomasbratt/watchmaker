@@ -114,11 +114,11 @@ API changes will not be backwards compatible between major releases.
 * Update README.md examples
 * Add crate level docs
 
-- [ ] v2.x.x
+- [x] v2.x.x
 
 * Fourth published version; unsupported; beta quality
 * Split tests, benches, examples into separate crate + workspace
-* Tests for `TournamentSelector` correctness
+* Add tests for `TournamentSelector`
 
 - [x] Unpublished; unsupported; beta quality
 

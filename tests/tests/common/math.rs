@@ -1,4 +1,5 @@
-use watchmaker::{assert_between, round};
+use tests::assert_between;
+use tests::round;
 
 #[test]
 fn can_round_to_zero_decimal_places() {

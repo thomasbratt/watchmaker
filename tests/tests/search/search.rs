@@ -1,4 +1,6 @@
 use rand::Rng;
+use tests::assert_between;
+use tests::round;
 use watchmaker::*;
 
 #[test]
@@ -10,7 +12,6 @@ fn search_finds_result_for_simple_test_case() {
         &SearchSettings::default(),
     );
 
-    eprintln!("{:?}", result);
     assert_eq!(result.is_ok(), true);
 
     let success = result.as_ref().ok().unwrap();
