@@ -1,3 +1,4 @@
+use tests::*;
 use watchmaker::*;
 
 // Show how the results and progress reporting work.

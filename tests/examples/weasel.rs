@@ -1,4 +1,5 @@
 use std::time::Duration;
+use tests::*;
 use watchmaker::*;
 
 // Show progress reporting.

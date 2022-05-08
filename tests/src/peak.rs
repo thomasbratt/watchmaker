@@ -1,5 +1,5 @@
-use crate::Genetic;
 use rand::Rng;
+use watchmaker::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PeakGenome(pub f64);

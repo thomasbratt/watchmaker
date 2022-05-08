@@ -1,6 +1,7 @@
 use rayon::prelude::*;
 use std::ops::RangeInclusive;
 use std::time::Duration;
+use tests::*;
 use watchmaker::*;
 
 /// Show the effect of search hyper parameters on search times.

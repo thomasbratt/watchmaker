@@ -1,4 +1,5 @@
 use std::time::Duration;
+use tests::*;
 use watchmaker::*;
 
 /// This example will search for solutions to a well-known TSP problem using various concurrency settings.

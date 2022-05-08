@@ -1,0 +1,18 @@
+[package]
+authors = ["Thomas Bratt <thomas.bratt@gmail.com>"]
+description = "A genetic algorithm implementation in Rust."
+documentation = "https://docs.rs/watchmaker/0.1.0/watchmaker/fn.solve.html"
+edition = "2021"
+homepage = "https://github.com/thomasbratt/watchmaker"
+keywords = ["algorithm", "evolution", "genetic", "optimization"]
+license = "MIT"
+name = "watchmaker"
+readme = "README.md"
+repository = "https://github.com/thomasbratt/watchmaker"
+version = "2.0.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.4"
+rayon = "1.5.2"

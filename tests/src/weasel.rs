@@ -1,5 +1,5 @@
-use crate::{make_random_string, Genetic, RandomStringDistribution, CHARACTERS};
 use rand::{thread_rng, Rng};
+use watchmaker::*;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct WSGenome(pub String);

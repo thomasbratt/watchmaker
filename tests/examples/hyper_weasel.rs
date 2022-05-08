@@ -1,3 +1,4 @@
+use tests::*;
 use watchmaker::*;
 
 // Show the effect of search hyper parameters on search times.

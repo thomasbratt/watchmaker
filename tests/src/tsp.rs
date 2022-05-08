@@ -1,7 +1,7 @@
-use crate::Genetic;
 use rand::prelude::SliceRandom;
 use rand::Rng;
 use std::collections::HashSet;
+use watchmaker::*;
 
 pub struct Location {
     x: f64,
