@@ -11,7 +11,7 @@ fn main() {
         for cross_over_candidates in (1..=8).map(|exponent| 2_usize.pow(exponent)) {
             let result = search(
                 Box::new(WSGenetic::default()),
-                Box::new(TournamentSelector::new(cross_over_candidates).unwrap()),
+                Box::new(TourniquetSelector::new(cross_over_candidates).unwrap()),
                 None,
                 &SearchSettingsBuilder::default()
                     .population_size(population_size)

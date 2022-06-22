@@ -4,13 +4,13 @@ use rand::Rng;
 use std::marker::PhantomData;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct TournamentSelector<G> {
+pub struct TourniquetSelector<G> {
     cross_over_candidates: usize,
     _phantom_data: PhantomData<G>,
 }
 
-impl<G> TournamentSelector<G> {
-    /// Create new Tournament Population Selector.
+impl<G> TourniquetSelector<G> {
+    /// Create new population selector.
     ///
     /// # Arguments
     ///
@@ -34,7 +34,7 @@ impl<G> TournamentSelector<G> {
     }
 }
 
-impl<G> Default for TournamentSelector<G> {
+impl<G> Default for TourniquetSelector<G> {
     fn default() -> Self {
         Self {
             cross_over_candidates: 8,
@@ -43,7 +43,7 @@ impl<G> Default for TournamentSelector<G> {
     }
 }
 
-impl<G> Selector<G> for TournamentSelector<G> {
+impl<G> Selector<G> for TourniquetSelector<G> {
     #[allow(clippy::needless_range_loop)]
     fn select(&mut self, _population: &[G], costs: &[f64], partner_indices: &mut [usize]) {
         for lhs_index in 0..costs.len() {

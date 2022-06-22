@@ -9,7 +9,7 @@ fn main() {
     println!("This is a very simple example that searches for the number 100.0.");
     let result = search(
         Box::new(PeakGenetic::default()),
-        Box::new(TournamentSelector::default()),
+        Box::new(TourniquetSelector::default()),
         Some(Box::new(|progress| {
             println!("{:?}", progress);
         })),

@@ -12,7 +12,7 @@ fn main() {
 fn run(concurrency: ConcurrencySettings) {
     let result = search(
         Box::new(TspGenetic::default()),
-        Box::new(TournamentSelector::new(15).unwrap()),
+        Box::new(TourniquetSelector::new(15).unwrap()),
         None,
         &SearchSettingsBuilder::default()
             .concurrency(concurrency)

@@ -8,7 +8,7 @@ fn main() {
     println!("This is example that searches for the string 'METHINKS IT IS LIKE A WEASEL'.");
     let result = search(
         Box::new(WSGenetic::default()),
-        Box::new(TournamentSelector::new(8).unwrap()),
+        Box::new(TourniquetSelector::new(8).unwrap()),
         Some(Box::new(|snapshot| {
             println!("{:?}", snapshot);
         })),

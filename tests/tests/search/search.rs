@@ -7,7 +7,7 @@ use watchmaker::*;
 fn search_finds_result_for_simple_test_case() {
     let result = search(
         Box::new(PeakGenetic::new()),
-        Box::new(TournamentSelector::default()),
+        Box::new(TourniquetSelector::default()),
         None,
         &SearchSettings::default(),
     );

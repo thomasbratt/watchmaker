@@ -5,7 +5,7 @@ use watchmaker::*;
 
 #[test]
 fn fails_when_cross_over_candidates_too_low() {
-    let result: Result<TournamentSelector<PeakGenome>, Failure> = TournamentSelector::new(0);
+    let result: Result<TourniquetSelector<PeakGenome>, Failure> = TourniquetSelector::new(0);
 
     assert_eq!(result.is_err(), true);
     assert_eq!(result.err().unwrap(), Failure::cross_over_candidates());
@@ -16,7 +16,7 @@ fn when_costs_are_uniform_all_candidates_are_selected_evenly() {
     const ITERATIONS: usize = 4_096;
     const DELTA: usize = ITERATIONS / 10;
 
-    let mut s: TournamentSelector<u8> = TournamentSelector::new(4).unwrap();
+    let mut s: TourniquetSelector<u8> = TourniquetSelector::new(4).unwrap();
     let population = make_vec(16, || 0);
     let costs = make_vec(16, || 0.0);
 
@@ -38,7 +38,7 @@ fn when_costs_are_uniform_all_candidates_are_selected_evenly() {
 fn when_costs_are_not_uniform_candidates_are_selected_according_to_distribution() {
     const ITERATIONS: usize = 4_096;
 
-    let mut s: TournamentSelector<u8> = TournamentSelector::new(4).unwrap();
+    let mut s: TourniquetSelector<u8> = TourniquetSelector::new(4).unwrap();
     let population = make_vec(16, || 0);
     let costs = (0..16).map(|x| x as f64).collect::<Vec<f64>>();
 

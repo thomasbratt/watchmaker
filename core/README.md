@@ -10,6 +10,10 @@ A [genetic algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm) library i
 * Results include the best genome found, reason for stopping the search and some basic statistics
 * Optional progress reporting
 * Optional multithreaded evaluation of genomes using [Rayon](https://github.com/rayon-rs/rayon)
+* Extensible cross-over partner selection via `Selector` trait.
+* Diversity protection. Each genome is selected at least once; cross over partner chosen by `Selector` trait.
+* Provided `TourniquetSelector` implementation simply selects the least cost partner from a random sample.
+* Crossover
 * Built-in crossover protection, to avoid the common bug where the first genome in a crossover operation is always used for the start of the resulting genome
 
 ## Usage
@@ -30,7 +34,7 @@ A complete example that searches for a specific floating point value:
         println!("This is a very simple example that searches for the number 100.0.");
         let result = search(
             Box::new(PeakGenetic::default()),
-            Box::new(TournamentSelector::default()),
+            Box::new(TourniquetSelector::default()),
             Some(Box::new(|progress| {
                 println!("{:?}", progress);
             })),
