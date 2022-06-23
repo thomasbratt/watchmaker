@@ -16,7 +16,7 @@ impl Failure {
         &self.message
     }
 
-    /// Return a failure for the case when the number of cross over candidates is invalid.
+    /// Return a failure for the case when the cross over radius is invalid.
     pub fn cross_over_candidates() -> Self {
         Failure {
             error: 1,
@@ -24,10 +24,18 @@ impl Failure {
         }
     }
 
+    /// Return a failure for the case when a cross over selector setting is invalid.
+    pub fn cross_over_setting() -> Self {
+        Failure {
+            error: 2,
+            message: Box::from("a cross over selector setting is invalid"),
+        }
+    }
+
     /// Return a failure for the case when the epoch limit is invalid.
     pub fn epoch_limit() -> Self {
         Failure {
-            error: 2,
+            error: 3,
             message: Box::from("epoch limit must be at least 1"),
         }
     }
@@ -35,7 +43,7 @@ impl Failure {
     /// Return a failure for the case when the mutation probability is invalid.
     pub fn mutation_probability() -> Self {
         Failure {
-            error: 3,
+            error: 4,
             message: Box::from("mutation probability must be in the range [0..1]"),
         }
     }
@@ -43,7 +51,7 @@ impl Failure {
     /// Return a failure for the case when the population size is invalid.
     pub fn population_size() -> Self {
         Failure {
-            error: 4,
+            error: 5,
             message: Box::from("population size must be at least 1"),
         }
     }
@@ -51,7 +59,7 @@ impl Failure {
     /// Return a failure for an invalid multithreading setting `min_chunk_size`.
     pub fn min_chunk_size() -> Self {
         Failure {
-            error: 5,
+            error: 6,
             message: Box::from("min_chunk_size size must be at least 1"),
         }
     }
@@ -59,7 +67,7 @@ impl Failure {
     /// Return a failure for the case when the time limit is invalid.
     pub fn time_limit() -> Self {
         Failure {
-            error: 6,
+            error: 7,
             message: Box::from("time limit must be non-zero"),
         }
     }
