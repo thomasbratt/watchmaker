@@ -6,12 +6,12 @@ use std::marker::PhantomData;
 /// A fast population crossover selector.
 /// For each genome in the population, select the best partner from N randomly chosen candidates.
 #[derive(Clone, Debug, PartialEq)]
-pub struct TourniquetSelector<G> {
+pub struct TournamentSelector<G> {
     cross_over_candidates: usize,
     _phantom_data: PhantomData<G>,
 }
 
-impl<G> TourniquetSelector<G> {
+impl<G> TournamentSelector<G> {
     /// Create new population selector.
     ///
     /// # Arguments
@@ -36,7 +36,7 @@ impl<G> TourniquetSelector<G> {
     }
 }
 
-impl<G> Default for TourniquetSelector<G> {
+impl<G> Default for TournamentSelector<G> {
     fn default() -> Self {
         Self {
             cross_over_candidates: 8,
@@ -45,7 +45,7 @@ impl<G> Default for TourniquetSelector<G> {
     }
 }
 
-impl<G> Selector<G> for TourniquetSelector<G> {
+impl<G> Selector<G> for TournamentSelector<G> {
     #[allow(clippy::needless_range_loop)]
     fn select(&mut self, _population: &[G], costs: &[f64], partner_indices: &mut [usize]) {
         for lhs_index in 0..costs.len() {

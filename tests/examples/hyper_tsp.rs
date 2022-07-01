@@ -12,7 +12,7 @@ fn main() {
         .map(|trial| {
             let success = search(
                 Box::new(TspGenetic::default()),
-                Box::new(TourniquetSelector::new(trial.cross_over_candidates).unwrap()),
+                Box::new(TournamentSelector::new(trial.cross_over_candidates).unwrap()),
                 None,
                 &SearchSettingsBuilder::default()
                     .population_size(trial.population_size)

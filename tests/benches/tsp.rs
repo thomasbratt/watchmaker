@@ -1,14 +1,14 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use std::time::Duration;
 use watchmaker::{
-    search, ConcurrencySettings, SearchSettingsBuilder, TourniquetSelector, TspGenetic,
+    search, ConcurrencySettings, SearchSettingsBuilder, TournamentSelector, TspGenetic,
 };
 
 #[inline]
 fn tsp(population_size: usize, cross_over_candidates: usize, concurrency: ConcurrencySettings) {
     let _result = search(
         Box::new(TspGenetic::default()),
-        Box::new(TourniquetSelector::new(cross_over_candidates).unwrap()),
+        Box::new(TournamentSelector::new(cross_over_candidates).unwrap()),
         None,
         &SearchSettingsBuilder::default()
             .concurrency(concurrency)
