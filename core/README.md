@@ -18,9 +18,15 @@ A [genetic algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm) library i
 
 ## Usage
 
-* Install Rust using [rustup](https://rustup.rs)
-* Add an entry to the `[dependencies]` section of your `Cargo.toml` file from: <https://crates.io/crates/watchmaker>
+* Add the following line to your `Cargo.toml` file:
+```yaml
+[dependencies]
+watchmaker = "2.0.0"
+```
+* Latest published version: https://crates.io/crates/watchmaker
 * Implement the `Genetic` trait for your search problem and call `watchmaker::search`.
+
+## Example
 
 A complete example that searches for a specific floating point value:
 
